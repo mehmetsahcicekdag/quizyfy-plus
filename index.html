@@ -1415,7 +1415,7 @@ function qrCanvas(text, size=220){
 function vShare(id){
   if (!studentLink(id)){ askSite(()=>vShare(id)); return; }
   const link = studentLink(id), title = DRAFT && DRAFT.id===id ? DRAFT.title : 'Test';
-  const msg = `📝 *${title}*\nTeste katılmak için linke tıkla, adını yaz ve başla:\n${link}`;
+  const msg = `✏️ *${title}*\nTeste katılmak için linke tıkla, adını yaz ve başla:\n${link}`;
   app.innerHTML = `
   <div class="card gb center" style="border-radius:22px;padding:26px 18px">
     <div style="font-size:46px">🎉</div>
@@ -1928,7 +1928,7 @@ function studentReport(r){
   m.el.querySelector('#srPrint').onclick=()=>doPrint('printing-modal');
   m.el.querySelector('#srWa').onclick=()=>{
     const t=RS.test, wrongQ = t.questions.map((q,k)=>({q,k,g:qzGrade(q,r.answers[q.id])})).filter(x=>!x.g.ok);
-    const txt = `📝 *${t.title}*\n👤 ${r.name}${r.cls?' ('+r.cls+')':''}\n🎯 Puan: *${r.pct}/100*\n✓ ${r.correct} doğru · ✗ ${r.wrong} yanlış · — ${r.empty} boş\n` + (wrongQ.length? `\n*Tekrar etmen gereken sorular:*\n` + wrongQ.slice(0,15).map(x=>`• S${x.k+1}: ${x.q.q.slice(0,80)}${x.q.q.length>80?'…':''}\n   ✓ Doğru cevap: ${answerTextOf(x.q)}`).join('\n') + (wrongQ.length>15?`\n… ve ${wrongQ.length-15} soru daha`:'') : '\n🎉 Tüm sorular doğru!');
+    const txt = `✏️ *${t.title}*\n👤 ${r.name}${r.cls?' ('+r.cls+')':''}\n🎯 Puan: *${r.pct}/100*\n✓ ${r.correct} doğru · ✗ ${r.wrong} yanlış · — ${r.empty} boş\n` + (wrongQ.length? `\n*Tekrar etmen gereken sorular:*\n` + wrongQ.slice(0,15).map(x=>`• S${x.k+1}: ${x.q.q.slice(0,80)}${x.q.q.length>80?'…':''}\n   ✓ Doğru cevap: ${answerTextOf(x.q)}`).join('\n') + (wrongQ.length>15?`\n… ve ${wrongQ.length-15} soru daha`:'') : '\n🎉 Tüm sorular doğru!');
     openExt('https://wa.me/?text='+encodeURIComponent(txt));
   };
   m.el.querySelector('#srMail').onclick=()=>mailDialog('student', r);
