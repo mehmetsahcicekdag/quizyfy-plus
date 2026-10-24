@@ -936,6 +936,7 @@ async function refreshRole(){
   catch(e){ if (e.server && /Oturum|pasif|başka bir yönetici/.test(e.message)){ logout(true); toast('🔒 '+esc(e.message),6000); } }
 }
 function logout(silent){ CFG = {api:CFG.api, key:'', site:CFG.site, role:'', name:'', user:''}; LS.set('cfg',CFG); LS.del('draft'); try{ DRAFT=null; }catch(e){} setHeader(); if(!silent) toast('Çıkış yapıldı'); go('#/giris'); }
+const DEFAULT_SID = 'AKfycbyMkZCZaXgDDtBQUlxrjPsDxDhZ4KCmdB4sO0WMysowJMlhB19n1w-rVI8YoH9ykBf0'; // ana sunucu: linkte s= yazılmaz
 function scriptIdOf(url){ const m=String(url).match(/script\.google\.com\/macros\/s\/([A-Za-z0-9_-]+)\/(exec|dev)/); return m?m[1]:''; }
 async function api(base, action, data={}, tries=2){
   let lastErr;
@@ -1402,6 +1403,7 @@ function studentLink(id){
   const base = IS_WEB_HOSTED ? location.origin + location.pathname : (CFG.site || (/^https?:$/.test(location.protocol) ? location.origin + location.pathname : ''));
   if (!base) return '';
   const sid = scriptIdOf(CFG.api);
+  if (sid === DEFAULT_SID) return `${base}?t=${id}`;
   return sid ? `${base}?t=${id}&s=${sid}` : `${base}?t=${id}&api=${encodeURIComponent(CFG.api)}`;
 }
 function qrCanvas(text, size=220){
@@ -1415,7 +1417,7 @@ function qrCanvas(text, size=220){
 function vShare(id){
   if (!studentLink(id)){ askSite(()=>vShare(id)); return; }
   const link = studentLink(id), title = DRAFT && DRAFT.id===id ? DRAFT.title : 'Test';
-  const msg = `✏️ *${title}*\nTeste katılmak için linke tıkla, adını yaz ve başla:\n${link}`;
+  const msg = `${link}\n\n*${title}*\nTeste katılmak için linke tıkla, adını yaz ve başla.`;
   app.innerHTML = `
   <div class="card gb center" style="border-radius:22px;padding:26px 18px">
     <div style="font-size:46px">🎉</div>
@@ -1513,7 +1515,8 @@ function publicQ(q){
 }
 let EX = null; // aktif sınav
 function studentMain(){
-  const base = QS.get('api') || (QS.get('s') ? `https://script.google.com/macros/s/${QS.get('s')}/exec` : '');
+  const sidQ = QS.get('s') || (QS.get('api') ? '' : DEFAULT_SID);
+  const base = QS.get('api') || (sidQ ? `https://script.google.com/macros/s/${sidQ}/exec` : '');
   $('#foot').classList.add('hidden');
   if (!base){ app.innerHTML = errCard('Link eksik','Bu test linki hatalı görünüyor. Öğretmeninden linki tekrar iste.'); return; }
   app.innerHTML = `<div class="center" style="padding:80px 0"><div class="spin"></div><p class="muted mt16">Test yükleniyor…</p></div>`;
