@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="Quizyfy Plus · Online Sınav">
 <meta name="twitter:description" content="Sınava katılmak için linke tıkla, adını ve birimini seç, başla.">
 <meta name="twitter:image" content="https://quizyfy-plus.netlify.app/og-image.jpg">
-<meta name="app-version" content="3.4">
+<meta name="app-version" content="3.5">
 <link rel="apple-touch-icon" href="og-image.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2322d3ee'/%3E%3Cstop offset='.5' stop-color='%23a855f7'/%3E%3Cstop offset='1' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%2307071a'/%3E%3Ccircle cx='30' cy='30' r='16' fill='none' stroke='url(%23g)' stroke-width='7'/%3E%3Cpath d='M34 38l6 6 12-14' fill='none' stroke='url(%23g)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="fonts/jakarta.css">
@@ -323,6 +323,13 @@ body.shield input,body.shield textarea{-webkit-user-select:text;user-select:text
 body.veil .xwrap,body.veil .xtop{filter:blur(18px)}
 body.veil::after{content:"Sınav ekranına dön";position:fixed;inset:0;display:grid;place-items:center;font-weight:800;font-size:20px;color:#fff;background:rgba(7,7,26,.55);z-index:58}
 @media print{body.shield>*{display:none!important}}
+/* v3.5 geniş ekran: masaüstünde tam genişlik */
+@media(min-width:1200px){
+  .hwrap,main,.ebar .in{max-width:min(1500px,94vw)}
+  .stats{grid-template-columns:repeat(5,1fr)}
+}
+@media(min-width:1500px){ body{zoom:1.12} }
+@media(min-width:1900px){ body{zoom:1.25} }
 
 </style>
 </head>
@@ -334,7 +341,7 @@ body.veil::after{content:"Sınav ekranına dön";position:fixed;inset:0;display:
   <div id="hdrRight"></div>
 </div></header>
 <main id="app"></main>
-<footer class="ft" id="foot">Quizyfy Plus v3.4 · <b>First Class Software</b> · 2026</footer>
+<footer class="ft" id="foot">Quizyfy Plus v3.5 · <b>First Class Software</b> · 2026</footer>
 <script src="lib/xlsx.style.js" defer></script>
 <script src="lib/mammoth.browser.min.js" defer></script>
 <script src="lib/pdf.min.js" defer></script>
