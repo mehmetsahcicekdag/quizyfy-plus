@@ -22,7 +22,7 @@
 <meta name="twitter:title" content="Quizyfy Plus · Online Sınav">
 <meta name="twitter:description" content="Sınava katılmak için linke tıkla, adını ve birimini seç, başla.">
 <meta name="twitter:image" content="https://quizyfy-plus.netlify.app/og-image.jpg">
-<meta name="app-version" content="3.6">
+<meta name="app-version" content="3.7">
 <link rel="apple-touch-icon" href="og-image.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2322d3ee'/%3E%3Cstop offset='.5' stop-color='%23a855f7'/%3E%3Cstop offset='1' stop-color='%23f59e0b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%2307071a'/%3E%3Ccircle cx='30' cy='30' r='16' fill='none' stroke='url(%23g)' stroke-width='7'/%3E%3Cpath d='M34 38l6 6 12-14' fill='none' stroke='url(%23g)' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="fonts/jakarta.css">
@@ -341,7 +341,7 @@ body.veil::after{content:"Sınav ekranına dön";position:fixed;inset:0;display:
   <div id="hdrRight"></div>
 </div></header>
 <main id="app"></main>
-<footer class="ft" id="foot">Quizyfy Plus v3.6 · <b>First Class Software</b> · 2026</footer>
+<footer class="ft" id="foot">Quizyfy Plus v3.7 · <b>First Class Software</b> · 2026</footer>
 <script src="lib/xlsx.style.js" defer></script>
 <script src="lib/mammoth.browser.min.js" defer></script>
 <script src="lib/pdf.min.js" defer></script>
@@ -1071,7 +1071,7 @@ function render(){
   setHeader();
   if (STUDENT_ID) return studentMain();
   const [_, view, arg] = ROUTE.split('/');
-  if (!connected()){ ({'giris':vLogin, 'kurulum':vConnect, 'baglan':vLogin}[view||''] || vLanding)(arg); return; }
+  if (!connected()){ ({'giris':vLogin, 'kurulum':vConnect, 'baglan':vLogin}[view||''] || vLogin)(arg); return; }
   ({'':vHome, 'duzenle':vEdit, 'ayarlar':vSettings, 'paylas':vShare, 'sonuclar':vResults, 'kurulum':(isOwner()?vConnect:vHome), 'baglan':(isOwner()?vConnect:vHome), 'onizle':vPreview, 'kullanicilar':vUsers, 'sistem':vSystem, 'hesap':vAccount, 'giris':vHome}[view||'']||vHome)(arg);
 }
 $('#homeBtn').onclick=()=>{ if (STUDENT_ID) return; go('#/'); };
@@ -1091,17 +1091,25 @@ function vLanding(){
 }
 function vLogin(){
   app.innerHTML = `<div class="card gb" style="max-width:440px;margin:24px auto 0;border-radius:22px;padding:26px 20px">
-    <span class="tag p">🔐 YÖNETİM GİRİŞİ</span><h1 style="font-size:26px;margin-top:10px">Giriş yap</h1>
-    <p class="muted small mt8">Yönetici ve adminler içindir. Sınava girecek kişilerin giriş yapmasına gerek yok.</p>
-    <div class="field mt16"><label>Kullanıcı adı</label><input id="lgU" autocapitalize="off" autocomplete="username" value="${esc(LS.get('lastUser',''))}"></div>
-    <div class="field mt12"><label>Şifre</label><input id="lgP" type="password" autocomplete="current-password"></div>
+    <span class="tag p">🔐 KULLANICI GİRİŞİ</span><h1 style="font-size:26px;margin-top:10px">Giriş yap</h1>
+    <p class="muted small mt8">Kullanıcı adın ve şifrenle gir.</p>
+    <div class="field mt16"><label>Kullanıcı adı</label><input id="lgU" autocapitalize="off" autocorrect="off" spellcheck="false" autocomplete="username" placeholder="örn. mehmet" value="${esc(LS.get('lastUser',''))}"></div>
+    <div class="field mt12"><label>Şifre</label><div class="linkbox" style="padding:0 6px 0 0"><input id="lgP" type="password" autocomplete="current-password" style="flex:1"><button class="btn btn-g btn-s" id="lgEye" type="button" title="Şifreyi göster">👁</button></div></div>
     <div id="lgMsg"></div>
     <button class="btn btn-p btn-block mt16" id="lgGo" style="padding:14px">Giriş yap</button>
-    <div class="center mt16 small"><a href="#/" class="muted">Sınav ekranı</a></div>
-  </div>`;
+    <p class="tiny muted center mt12">Şifreni unuttuysan yöneticine başvur.</p>
+  </div>
+  <details class="card" style="max-width:440px;margin:14px auto 0;border-radius:18px;padding:14px 18px">
+    <summary class="b" style="cursor:pointer">📝 Sınav linkin mi var?</summary>
+    <p class="small muted mt8">Sınava girmek için giriş yapmana gerek yok. Sana gönderilen linke tıkla ya da buraya yapıştır.</p>
+    <div class="linkbox mt12"><input id="lkIn" placeholder="Sınav linkini yapıştır" autocapitalize="off"><button class="btn btn-p btn-s" id="lkGo">Sınava gir</button></div>
+  </details>`;
+  $('#lgEye').onclick=()=>{ const i=$('#lgP'); i.type = i.type==='password' ? 'text' : 'password'; };
+  $('#lkGo').onclick=()=>{ const v=$('#lkIn').value.trim(); try{ const u=new URL(v); if (u.searchParams.get('t')){ location.href = location.pathname + u.search; return; } }catch(e){} toast('Geçerli bir sınav linki yapıştır'); };
   const go2 = async()=>{
-    const user=$('#lgU').value.trim(), pass=$('#lgP').value, a=(CFG.api||DEFAULT_API);
+    const user=$('#lgU').value.trim().toLowerCase(), pass=$('#lgP').value, a=(CFG.api||DEFAULT_API);
         if (!user||!pass){ $('#lgMsg').innerHTML='<div class="notice err mt12">Kullanıcı adı ve şifreyi yaz.</div>'; return; }
+    if (user.includes('@')){ $('#lgMsg').innerHTML='<div class="notice err mt12">Kullanıcı adına mail adresini değil, sana verilen <b>kullanıcı adını</b> yaz (örn. mehmet).</div>'; return; }
     const b=$('#lgGo'); b.disabled=true; b.textContent='⏳ Giriş yapılıyor…';
     try{ const j=await api(a,'login',{user,pass},2); CFG=Object.assign({},CFG,{api:a,key:j.token,role:j.role,name:j.name,user:j.user}); LS.set('cfg',CFG); LS.set('lastUser',user); toast(`👋 Hoş geldin ${esc(String(j.name).split(' ')[0])}`); refreshRole(); go('#/'); render(); }
     catch(e){ $('#lgMsg').innerHTML=`<div class="notice err mt12">❌ ${esc(e.message)}</div>`; b.disabled=false; b.textContent='Giriş yap'; }
